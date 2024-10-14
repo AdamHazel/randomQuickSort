@@ -115,7 +115,7 @@ public:
 
 class randomQuickSort {
 private:
-    int randomNumber(int min, int max) {
+    static int randomNumber(int min, int max) {
         if (min <= max) {
             std::random_device rd;
             std::mt19937 gen(rd());
@@ -128,7 +128,7 @@ private:
         }
     }
 
-    int partition(std::vector<float> &vec, int start, int end) {
+    static int partition(std::vector<float> &vec, int start, int end) {
         float pivot = vec[end];
 
         int partitionIndex = start;
@@ -142,13 +142,13 @@ private:
         return partitionIndex;
     }
 
-    int randomisedPartition(std::vector<float> &vec, int start, int end) {
+    static int randomisedPartition(std::vector<float> &vec, int start, int end) {
         int pivotIndex = randomNumber(start, end);
         std::swap(vec[pivotIndex], vec[end]);
         return partition(vec, start, end);
     }
 
-    void QuickSort (std::vector<float> &vec, int start, int end) {
+    static void QuickSort (std::vector<float> &vec, int start, int end) {
         if (start < end) {
             int pIndex {randomisedPartition(vec, start, end)};
 
@@ -158,7 +158,7 @@ private:
     }
 
 public:
-    randomQuickSort(std::vector<float> &vec) {
+    static void Sort(std::vector<float> &vec) {
         int start = 0;
         int end = static_cast<int>(vec.size() - 1);
         QuickSort(vec, start, end);
@@ -190,7 +190,7 @@ int main() {
         inputParser input(container, programControl);
 
         if (!programControl.errorInProgram) {
-            randomQuickSort sorter (container);
+            randomQuickSort::Sort(container);
             printer::print(container);
         }
 
