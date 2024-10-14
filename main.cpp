@@ -27,7 +27,7 @@ public:
     }
 };
 
-class inputParser {
+class inputToVector {
 private:
     std::string input;
 
@@ -80,6 +80,11 @@ private:
             while (it != input.end()) {
                 if(*it == Constants::comma) {
                     if (!temp.empty()) {
+                        if (temp.size() == 1 && isMinus(temp[0])) {
+                            f.errorInProgram = true;
+                            std::cout << "ERROR: Minus sign with no value..." << std::endl;
+                            return;
+                        }
                         auto tempFloat = std::stof(temp);
                         vec.push_back(tempFloat);
                         temp.clear();
@@ -95,7 +100,9 @@ private:
                 }
                 ++it;
             }
-            if (!temp.empty()) {
+            if (!temp.empty()){
+                if (temp.size() == 1 && isMinus(temp[0]))
+                    return;
                 auto tempFloat = std::stof(temp);
                 vec.push_back(tempFloat);
                 temp.clear();
@@ -106,7 +113,7 @@ private:
     }
 
 public:
-    inputParser(std::vector<float>& vec, controlFlags &f) {
+    inputToVector(std::vector<float>& vec, controlFlags &f) {
         stringGetter();
         removeDuplicatesAndCatchErrors(f);
         parseToVector(vec, f);
@@ -187,7 +194,7 @@ int main() {
     std::vector<float> container;
 
     while(programControl.programRunning) {
-        inputParser input(container, programControl);
+        inputToVector input(container, programControl);
 
         if (!programControl.errorInProgram) {
             randomQuickSort::Sort(container);
@@ -201,7 +208,6 @@ int main() {
         }
         else
             programControl.programRunning = false;
-
     }
 
     return 0;
