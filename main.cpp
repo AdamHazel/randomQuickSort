@@ -9,11 +9,18 @@ namespace Constants {
     constexpr char minus = '-';
 }
 
+/**
+ * @class controlFlags controls the running of the programming (including recording if an error has occurred)
+ */
 class controlFlags {
 public:
     bool errorInProgram{};
     bool programRunning{ true };
 
+    /**
+     * @brief used to ask user if they wish to run another round of sorting
+     * @return char indicating answer
+     */
     char tryAgain() {
         std::cout << "Do you wish to order another list of values? \nType r to restart program or any other"
                      " key to exit:" << std::endl;
@@ -22,29 +29,49 @@ public:
         return static_cast<char>(std::toupper(static_cast<unsigned char>(temp[0])));
     }
 
-    void programReset() {
+    void errorReset() {
         errorInProgram = false;
     }
 };
 
+/**
+ * class inputToVector is used to take in input, check for errors, convert values to floats and place in vector
+ */
 class inputToVector {
 private:
     std::string input;
 
+    /**
+     * @brief gets string from user
+     */
     void stringGetter() {
         std::cout << "\nPlease input list of values separated by commas. No need to use [] at the start or end"
                      "of array:" << std::endl;
         std::getline(std::cin >> std::ws, input);
     }
 
+    /**
+     * @brief checks if character is a minus sign
+     * @param a - a character
+     * @return bool
+     */
     bool isMinus(char a) {
         return a == Constants::minus;
     }
 
+    /**
+     * @brief checks if character is a valid symbol
+     * @param a - a character
+     * @return bool
+     */
     bool isValidSymbol(char a) {
         return(a == Constants::comma || a == Constants::decimal || a == Constants::minus);
     }
 
+    /**
+     * @brief removes duplicates and flags basic errors
+     * @param f - reference to an object of class controlFlags
+     */
     void removeDuplicatesAndCatchErrors(controlFlags &f) {
         auto length = input.size();
         for (int i = 0; i < length; i++) {
@@ -72,6 +99,11 @@ private:
         }
     }
 
+    /**
+     * @brief converts values given in string input to floats and places them in the referenced vector
+     * @param vec - reference to a vector of floats
+     * @param f - reference to an object of class controlFlags
+     */
     void parseToVector(std::vector<float>& vec, controlFlags &f) {
         if (!f.errorInProgram) {
             bool decimalUsed = false;
@@ -113,6 +145,11 @@ private:
     }
 
 public:
+    /**
+     * @brief Constructor for class
+     * @param vec - reference to a vector of floats
+     * @param f - reference to an object of class controlFlags
+     */
     inputToVector(std::vector<float>& vec, controlFlags &f) {
         stringGetter();
         removeDuplicatesAndCatchErrors(f);
@@ -120,8 +157,18 @@ public:
     }
 };
 
+/**
+ * @class randomQuickSort - includes functions needed to sort an unsorted set of floats. Functions are static so that
+ *                          it is not necessary to create an object of this class to sort the vector
+ */
 class randomQuickSort {
 private:
+    /**
+     * @brief generate a random number to be used in randomisedPartition (choosing of a random pivot)
+     * @param min
+     * @param max
+     * @return returns a number within the range of min and max
+     */
     static int randomNumber(int min, int max) {
         if (min <= max) {
             std::random_device rd;
@@ -135,6 +182,13 @@ private:
         }
     }
 
+    /**
+     * @brief partitions unsorted list
+     * @param vec - reference to a vector of floats
+     * @param min
+     * @param max
+     * @ returns index on the list is partitioned
+     */
     static int partition(std::vector<float> &vec, int start, int end) {
         float pivot = vec[end];
 
@@ -149,12 +203,25 @@ private:
         return partitionIndex;
     }
 
+    /**
+     * @brief Responsible choosing a random pivot and then running partition function
+     * @param vec - reference to a vector of floats
+     * @param min
+     * @param max
+     * @ returns index on the list is partitioned
+     */
     static int randomisedPartition(std::vector<float> &vec, int start, int end) {
         int pivotIndex = randomNumber(start, end);
         std::swap(vec[pivotIndex], vec[end]);
         return partition(vec, start, end);
     }
 
+    /**
+     * @brief Sorts unsorted set of floats
+     * @param vec - reference to a vector of floats
+     * @param min
+     * @param max
+     */
     static void QuickSort (std::vector<float> &vec, int start, int end) {
         if (start < end) {
             int pIndex {randomisedPartition(vec, start, end)};
@@ -165,6 +232,10 @@ private:
     }
 
 public:
+    /**
+     * @brief function used to access classes functionality
+     * @param vec - reference to a vector of floats
+     */
     static void Sort(std::vector<float> &vec) {
         int start = 0;
         int end = static_cast<int>(vec.size() - 1);
@@ -172,6 +243,9 @@ public:
     }
 };
 
+/**
+ * @class printer - prints the elements of a vector of floats
+ */
 class printer {
 public:
     static void print(std::vector<float> &vec) {
@@ -204,7 +278,7 @@ int main() {
         // Does the user want to run another operation?
         if (programControl.tryAgain() == 'R') {
             container.clear();
-            programControl.programReset();
+            programControl.errorReset();
         }
         else
             programControl.programRunning = false;
