@@ -2,7 +2,7 @@
 
 A school project where we get to practice the randomised quick sort algorithm.
 
-The assignment required a simle user interface where a string is given as input, and the ordered list is returned to the user.
+The assignment required a simple user interface where a string is given as input, and the ordered list is returned to the user.
 
 ## For users
 
